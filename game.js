@@ -24,18 +24,40 @@ canvas.height = 576;
 // Clear the canvas
 c.clearRect(0, 0, canvas.width, canvas.height);
 
-
-
-let initY = 100;
-function animate() {
-    setTimeout(() => {
-        window.requestAnimationFrame(animate);
-        // Draw a white background on the canvas
-        c.fillStyle = "white";
-        c.fillRect(0, 0, canvas.width, canvas.height);
+class Player {
+	constructor(x, y) {
+		this.position = {
+			x: x,
+			y: y,
+		};
+	}
+	draw() {
 		c.fillStyle = "red";
-		c.fillRect(200,initY , 100, 100);
-		initY ++;
+		c.fillRect(this.position.x, this.position.y, 100, 100);
+	}
+	update() {
+		this.position.y++;
+	}
+}
+
+let players = [];
+players.push(new Player(100, 100));
+players.push(new Player(300, 100));
+players.push(new Player(500, 100));
+players.push(new Player(700, 100));
+
+function animate() {
+	setTimeout(() => {
+		window.requestAnimationFrame(animate);
+		// Draw a white background on the canvas
+		c.fillStyle = "white";
+		c.fillRect(0, 0, canvas.width, canvas.height);
+
+		for (const player of players) {
+			player.draw();
+			player.update();
+		}
 	}, 1000 / 144);
 }
-animate()
+animate();
+
