@@ -25,26 +25,56 @@ canvas.height = 576;
 c.clearRect(0, 0, canvas.width, canvas.height);
 
 class Player {
-	constructor(x, y) {
-		this.position = {
-			x: x,
-			y: y,
-		};
+	constructor(position, velocity) {
+		this.position = position;
+		this.velocity = velocity;
+		this.bounce = 0.5;
 	}
 	draw() {
-		c.fillStyle = "red";
+        c.fillStyle = "red";
 		c.fillRect(this.position.x, this.position.y, 100, 100);
+        c.strokeStyle = "blue";
+        c.strokeRect(this.position.x, this.position.y, 100, 100);
 	}
 	update() {
-		this.position.y++;
-	}
+        this.collision();
+        this.position.y += this.velocity.y;
+        this.position.x += this.velocity.x;
+        this.velocity.y += 0.1;
+        this.draw();
+        console.log(this.velocity.y);
+    }
+    
+    collision() {
+        if (this.position.x + 100 >= canvas.width) {
+            this.position.x = canvas.width - 100;
+            this.velocity.x *= -this.bounce;
+        }
+        if (this.position.x <= 0) {
+            this.position.x = 0;
+            this.velocity.x *= -this.bounce;
+        }
+        if (this.position.y + 100 >= canvas.height) {
+            this.position.y = canvas.height - 100;
+            this.velocity.y *= -this.bounce;
+        }
+        if (this.position.y <= 0) {
+            this.position.y = 0;
+            this.velocity.y *= -this.bounce;
+        }
+    }
+    
 }
 
 let players = [];
-players.push(new Player(100, 100));
-players.push(new Player(300, 100));
-players.push(new Player(500, 100));
-players.push(new Player(700, 100));
+players.push(new Player({ x: 100, y: 125 }, { x: -9, y: -10 }));
+players.push(new Player({ x: 300, y: 100 }, { x: -10, y: -10 }));
+players.push(new Player({ x: 500, y: 75 }, { x: 2, y: +10 }));
+players.push(new Player({ x: 500, y: 75 }, { x: -2, y: -10 }));
+players.push(new Player({ x: 200, y: 200 }, { x: 15, y: 12 }));
+players.push(new Player({ x: 400, y: 300 }, { x: -13, y: -18 }));
+players.push(new Player({ x: 600, y: 150 }, { x: 11, y: 14 }));
+players.push(new Player({ x: 800, y: 250 }, { x: -61, y: -13 }));
 
 function animate() {
 	setTimeout(() => {
@@ -54,10 +84,8 @@ function animate() {
 		c.fillRect(0, 0, canvas.width, canvas.height);
 
 		for (const player of players) {
-			player.draw();
 			player.update();
 		}
-	}, 1000 / 144);
+	}, 1000 / 144); /* 144fps */
 }
 animate();
-
